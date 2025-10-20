@@ -1,34 +1,71 @@
-## 🇨🇳 中文 README｜translate-zh2en
+<h1 align="center">Translate-ZH2EN</h1>
+<p align="center">轻量可复现的中→英机器翻译项目（PyTorch Lightning + Hydra + Transformers）</p>
+<p align="center">
+	<a href="https://huggingface.co/caixiaoshun/translate-zh2en" target="_blank">
+		<img alt="HF Model" src="https://img.shields.io/badge/HuggingFace-Model-ffcc4d?logo=huggingface" />
+	</a>
+	<a href="https://huggingface.co/spaces/caixiaoshun/translate-zh2en" target="_blank">
+		<img alt="HF Space" src="https://img.shields.io/badge/HuggingFace-Space-ffcc4d?logo=huggingface" />
+	</a>
+	<img alt="Python" src="https://img.shields.io/badge/Python-3.11-3776AB?logo=python" />
+	<img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch" />
+	<img alt="Lightning" src="https://img.shields.io/badge/Lightning-2.x-792ee5?logo=lightning" />
+	<img alt="Hydra" src="https://img.shields.io/badge/Hydra-1.3-89b8ff" />
+    <img alt="Transformers" src="https://img.shields.io/badge/Transformers-4.x-ff9a00?logo=huggingface" />
+    <img alt="sacreBLEU" src="https://img.shields.io/badge/sacreBLEU-2.x-38b2ac" />
+    <img alt="SentencePiece" src="https://img.shields.io/badge/SentencePiece-0.2-blue" />
+  
+</p>
+<p align="center">
+	<a href="#-总览">总览</a>
+	·
+	<a href="#-模型说明">模型说明</a>
+	·
+	<a href="#-快速开始">快速开始</a>
+	·
+	<a href="#-评估流程">评估流程</a>
+	·
+  <a href="#-开源资产与目录">开源资产与目录</a>
+</p>
 
-一个基于 PyTorch Lightning + Hydra 的中英互译（以中译英为主）最小可用示例。包含完整的数据管线、可配置的 Transformer 结构（支持 RoPE）、训练与验证、单句推理、批量推理与 sacreBLEU/chrF/TER 评估。
+## 📖 总览
 
-本项目以 Linux/macOS 的 Bash 为示例命令，亦可在其他平台运行。
+这是一个基于 **PyTorch Lightning** 和 **Hydra** 的轻量级中英翻译项目。它提供了一个完整的、可复现的训练和评估流程，旨在作为 Transformer 模型在机器翻译任务中的最小可用示例。
+
+**核心特性**:
+- **端到端**: 从数据处理、训练、推理到评估的全流程覆盖。
+- **模块化设计**: 使用 PyTorch Lightning 实现代码解耦，易于扩展。
+- **灵活配置**: 通过 Hydra 管理所有实验参数，支持命令行覆盖。
+- **现代模型**: 内置支持 RoPE（旋转位置编码）的 Transformer 结构。
+- **资产开放**: 提供预训练权重、在线 Demo 和评估结果，开箱即用。
 
 ---
 
-## 目录
-
-- 功能概述
-- 目录结构
-- 环境与依赖
-- 快速开始
-	- 数据准备（JSONL 格式）
-	- 下载或准备分词器（Tokenizer）
-	- 训练（Hydra 配置）
-	- 评估（Hydra）
-	- 单句推理
-	- 批量推理与自动评测
-- 配置说明（Hydra）
-- 模型说明（Mini Translate + RoPE）
-- 日志、检查点与可视化
-- 常见问题（FAQ）
-- 致谢与参考
+## 📜 目录
+- [**总览**](#-总览)
+- [**目录**](#-目录)
+- [**功能概述**](#-功能概述)
+- [**开源资产与目录**](#-开源资产与目录)
+- [**流程总览**](#-流程总览)
+- [**模型说明**](#-模型说明)
+- [**目录结构**](#-目录结构)
+- [**环境与依赖**](#-环境与依赖)
+- [**快速开始**](#-快速开始)
+  - [准备数据](#1-准备数据jsonl)
+  - [准备分词器](#2-准备分词器tokenizer)
+  - [训练](#3-训练)
+  - [单句推理](#4-单句推理)
+- [**评估流程**](#-评估流程)
+  - [第一步：批量推理](#第一步批量推理--生成-csv)
+  - [第二步：计算指标](#第二步计算指标sacrebleu--chrf--ter)
+- [**日志、检查点与可视化**](#-日志检查点与可视化)
+- [**参考与致谢**](#-参考与致谢)
 
 ---
 
-## 功能概述
+## ✨ 功能概述
 
-- 使用 Lightning 的模块化训练流程（`LightningModule`/`LightningDataModule`）
+- 使用 Lightning 的模块化训练流程
 - 使用 Hydra 进行配置管理与实验追踪（多种实验/模型/回调配置）
 - 支持 Transformer 编解码器结构、Rope 位置编码、权重共享词嵌入/输出头
 - 简洁的推理脚本：单句 greedy decode、批量推理到 CSV
@@ -36,143 +73,310 @@
 
 ---
 
-## 目录结构
+## � 开源资产与目录
 
-仅列出核心：
+本项目在 Hugging Face 上开源了以下资产（统一入口）：
 
-- `src/train.py`：训练入口（Hydra）
-- `src/eval.py`：评估入口（Hydra，需要传 `ckpt_path`）
-- `src/inference.py`：单句推理脚本（独立 argparse）
-- `src/batch_inference.py`：批量推理生成 CSV（独立 argparse）
-- `src/translate_eval.py`：对 CSV 进行 sacreBLEU/chrF/TER 评测
-- `src/data/translate_datamodule.py`：LightningDataModule（组 batch、mask 等）
-- `src/data/components/translate_data.py`：数据读取（JSONL：`{"chinese":..., "english":...}`）与分词
-- `src/models/components/mini_translate.py`：最小翻译模型（含 RoPE、Encoder/Decoder）
-- `src/models/translate_module.py`：LightningModule（loss/metrics/optimizer/schedule）
-- `configs/`：Hydra 配置（data/model/trainer/callbacks/experiment 等）
+- 模型与文件仓库：
+  - 链接：https://huggingface.co/caixiaoshun/translate-zh2en
+  - 内容：模型权重、数据样例、批量推理结果 CSV 等
+- 在线体验（Space）：
+  - 链接：https://huggingface.co/spaces/caixiaoshun/translate-zh2en
+
+常用子目录说明（Hugging Face 仓库 Files 视图）：
+
+```text
+translate-zh2en (HF)
+├─ weights/                # 预训练权重（.pt）
+│  ├─ default.pt
+│  ├─ absolute-position-embedding.pt
+│  ├─ no-position-embedding.pt
+│  └─ post-norm.pt
+├─ result/                 # 预生成的推理结果（CSV）
+│  ├─ translate.csv
+│  ├─ translate-absolute-position-embedding.csv
+│  ├─ translate-no-position-embedding.csv
+│  └─ translate-post-norm.csv
+├─ data/                   # 数据样例（JSON）
+│  ├─ translation2019zh_train.json
+│  └─ translation2019zh_valid.json
+└─ README.md               # HF 模型卡（可选）
+```
+
+说明：不同时间点文件可能更新，建议以 Hugging Face 页面“Files”列表为准。
 
 ---
 
-## 环境与依赖
+## 🧭 流程总览
 
-建议：
+<p align="center">
+	<img src="assets/pipeline.svg" alt="Pipeline Overview" width="820" />
+</p>
 
-- Python 3.10/3.11（与 PyTorch 版本匹配）
-- GPU（CUDA）可用则更快，CPU 也可运行但速度较慢
 
-核心依赖（见 `requirements.txt`）：
+---
 
-- torch 2.9.0，lightning 2.5.5，torchmetrics，transformers，datasets，sacrebleu，sentencepiece
-- hydra-core，tensorboard
+<a id="model"></a>
+## 🧠 模型说明
 
-安装步骤（Bash）：
+文件：`src/models/components/mini_translate.py`
+
+- 编码器-解码器 Transformer 结构，支持多头注意力、前馈、LayerNorm
+- 使用 RoPE（旋转位置编码）作用在 Q/K 上
+- 词嵌入与输出层权重共享
+- 解码时采用 greedy 策略
+
+预训练权重下载：
+
+- 代码中四种模型对应的权重，已发布在 Hugging Face 的 weights 目录：
+	- https://huggingface.co/caixiaoshun/translate-zh2en/tree/main/weights
+	- 文件列表：
+		- `default.pt`（基础配置，对应 `model=translate` 或 `experiment=translate`）
+		- `absolute-position-embedding.pt`（绝对位置编码，对应 `experiment=translate-absolute-position-embedding`）
+		- `no-position-embedding.pt`（无位置编码，对应 `experiment=translate-no-position-embedding`）
+		- `post-norm.pt`（Post-Norm 结构，对应 `experiment=translate-post-norm`）
+	- 使用时将推理或评估命令中的 `--weight_path` 指向下载的 `.pt` 文件即可。
+
+优化器与调度（见 `src/models/translate_module.py`）：
+
+- `AdamW` + 余弦退火
+- loss：`CrossEntropyLoss`
+
+### 性能对比
+
+下表展示了不同模型变体在验证集上的 BLEU、chrF 和 TER 分数。所有分数均通过 `translate_eval.py` 脚本计算得出。
+
+| 模型/设置 | BLEU ↑ | chrF ↑ | TER ↓ |
+| :--- | :--- | :--- | :--- |
+| **Default (RoPE + Pre-LN)** | **15.47** | **43.99** | **79.38** |
+| Post-LN | 1.40 | 14.65 | 92.46 |
+| No Position Embedding | 6.71 | 35.24 | 94.47 |
+| Absolute Position Embedding | 6.45 | 34.20 | 95.21 |
+
+---
+
+## 🗂️ 目录结构
+
+```text
+translate-zh2en
+├─ assets/
+│  └─ pipeline.svg
+├─ configs/
+│  ├─ data/
+│  │  └─ translate.yaml
+│  ├─ model/
+│  │  └─ translate.yaml
+│  ├─ experiment/
+│  │  ├─ translate.yaml
+│  │  ├─ translate-absolute-position-embedding.yaml
+│  │  ├─ translate-no-position-embedding.yaml
+│  │  └─ translate-post-norm.yaml
+│  ├─ trainer/
+│  │  └─ default.yaml
+│  ├─ callbacks/
+│  │  └─ default.yaml
+│  ├─ paths/
+│  │  └─ default.yaml
+│  └─ hydra/
+│     └─ default.yaml
+├─ scripts/
+│  ├─ train.sh
+│  ├─ infer-translate.sh
+│  └─ …
+├─ src/
+│  ├─ train.py
+│  ├─ eval.py
+│  ├─ inference.py
+│  ├─ batch_inference.py
+│  ├─ translate_eval.py
+│  ├─ data/
+│  │  ├─ translate_datamodule.py
+│  │  └─ components/
+│  │     └─ translate_data.py
+│  └─ models/
+│     ├─ translate_module.py
+│     └─ components/
+│        └─ mini_translate.py
+├─ tests/
+│  ├─ test_train.py
+│  ├─ test_eval.py
+│  └─ …
+├─ requirements.txt
+├─ pyproject.toml
+├─ setup.py
+└─ README.md
+```
+
+---
+
+## 📦 环境与依赖
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
+conda create -n translate-zh2en python=3.11 -y
+conda activate translate-zh2en
 pip install -U pip
 pip install -r requirements.txt
 ```
 
-若安装 PyTorch 报错，请根据本机 CUDA 版本到官方指引选择命令安装后，再执行其余依赖安装。
 
 ---
 
-## 快速开始
+## 🚀 快速开始
+### 1. 准备数据 (JSONL)
 
-### 1) 准备数据（JSONL）
+默认配置使用 `data/` 目录下的 `translation2019zh_train.json` 和 `translation2019zh_valid.json`。
 
-默认配置使用：
-
-- 训练集：`data/translation2019zh_train.json`
-- 验证/测试：`data/translation2019zh_valid.json`
-
-文件格式为 JSON Lines（每行一个 JSON 对象），键必须包含：
+文件格式为 **JSON Lines**（每行一个 JSON 对象），且必须包含 `chinese` 和 `english` 两个键：
 
 ```json
 {"chinese": "今天的天气很好。", "english": "The weather is great today."}
 ```
 
-如你的路径或文件名不同，可通过 Hydra 覆盖：`data.train_path=... data.val_path=...`
+> [!TIP]
+> 如果你的数据路径或文件名不同，可在运行时通过 Hydra 覆盖：
+> `data.train_path=path/to/your/train.json data.val_path=path/to/your/val.json`
 
-### 2) 准备分词器（Tokenizer）
+**数据获取途径**:
 
-默认使用目录：`checkpoints/mt5-small`。你可以将 Hugging Face 的 `google/mt5-small` 下载到该目录。例如运行一次性预下载脚本（会把分词器文件缓存到指定目录）：
+- **a) 从开源仓库获取**:
+  数据来源于 [brightmart/nlp_chinese_corpus](https://github.com/brightmart/nlp_chinese_corpus)。
 
-```bash
-python - <<'PY'
+- **b) 运行脚本下载**:
+  项目提供了下载脚本，可一键下载并解压到 `data/` 目录。
+  ```bash
+  bash scripts/download.sh
+  unzip dataset.zip -d data
+  rm dataset.zip
+  ```
+
+- **c) 从 Hugging Face 直接下载**:
+  我也将整理好的数据上传到了 Hugging Face，支持 `wget` 直接下载：
+  ```bash
+  # 创建 data 目录
+  mkdir -p data
+  
+  # 下载训练集和验证集
+  wget https://huggingface.co/caixiaoshun/translate-zh2en/resolve/main/data/translation2019zh_train.json -O data/translation2019zh_train.json
+  wget https://huggingface.co/caixiaoshun/translate-zh2en/resolve/main/data/translation2019zh_valid.json -O data/translation2019zh_valid.json
+  ```
+
+### 2. 准备分词器 (Tokenizer)
+
+本项目默认使用 `google/mt5-small` 的分词器，并期望其位于 `checkpoints/mt5-small` 目录。
+
+你可以运行以下一次性 Python 脚本来预下载并保存分词器文件：
+
+```python
 from transformers import AutoTokenizer
-tok = AutoTokenizer.from_pretrained('google/mt5-small')
-tok.save_pretrained('checkpoints/mt5-small')
-print('saved to checkpoints/mt5-small')
-PY
+
+print("Downloading tokenizer 'google/mt5-small'...")
+tok = AutoTokenizer.from_pretrained('google/mt5-small', fast=False)
+
+save_path = 'checkpoints/mt5-small'
+tok.save_pretrained(save_path)
+print(f"Tokenizer saved to '{save_path}'")
 ```
 
-如果你有自己的词表/分词器，只需保证 `src/data/components/translate_data.py` 与 `src/inference.py` 中的 `tokenizer_path` 指向它，并具有有效的 `pad_token_id` 与 `eos_token_id`。
+### 3. 训练
 
-### 3) 训练
+使用 `src/train.py` 脚本启动训练。通过 `experiment` 参数可以方便地切换不同的实验配置。
 
-使用默认实验配置（`configs/experiment/translate.yaml`）：
+**默认训练**:
+使用 `configs/experiment/translate.yaml` 中的默认配置。
 
 ```bash
 python src/train.py experiment=translate
 ```
 
-常见覆盖项（示例）：
+**自定义训练**:
+Hydra 允许在命令行中轻松覆盖任何配置项。
 
-- 训练轮数：`trainer.max_epochs=10`
-- batch 大小：`data.batch_size=64`
-- 学习率：`model.lr=3e-4`
-- 使用 CPU：`trainer.accelerator=cpu`
+- **示例：修改训练参数**
+  ```bash
+  # 训练 10 个 epoch，batch size 设为 64，学习率改为 3e-4
+  python src/train.py experiment=translate trainer.max_epochs=10 data.batch_size=64 model.lr=3e-4
+  ```
 
-```bash
-python src/train.py experiment=translate trainer.max_epochs=10 data.batch_size=64 model.lr=3e-4
-```
+- **示例：在 CPU 上训练**
+  ```bash
+  python src/train.py experiment=translate trainer.accelerator=cpu
+  ```
 
-模型/实验变体：
+**切换模型/实验变体**:
+项目预置了多种模型结构和实验配置，可通过 `experiment` 参数直接调用。
 
-- 绝对位置编码版本：`experiment=translate-absolute-position-embedding`
-- 仅修改模型配置（不换 experiment）：`model=translate`（或其他模型 yaml）
+- **例如，使用绝对位置编码**:
+  ```bash
+  python src/train.py experiment=translate-absolute-position-embedding
+  ```
+- **仅修改模型，保持其他配置不变**:
+  ```bash
+  # 使用 post-norm 结构的模型，但复用默认实验的其他配置
+  python src/train.py model=translate-post-norm
+  ```
 
-### 4) 评估（Hydra）
+### 4. 单句推理
 
-`src/eval.py` 需要提供训练得到的 `ckpt_path`。默认 `eval.yaml` 使用的是示例 MNIST，需要覆盖为翻译配置：
-
-```bash
-python src/eval.py data=translate model=translate ckpt_path="logs/train/translate/default/<时间戳>/checkpoints/last.ckpt"
-```
-
-你也可以指定更细的 trainer 或 logger 覆盖项。
-
-### 5) 单句推理
-
-`src/inference.py` 是独立 argparse 脚本：
-
-```bash
-python src/inference.py --config configs/model/translate.yaml --weight_path "logs/train/translate/default/<时间戳>/checkpoints/last.ckpt" --tokenizer_path checkpoints/mt5-small --text "今天天气不错，我们去公园散步吧。" --max_src_len 128 --max_tgt_len 128
-```
-
-输出示例：
-
-```
-result: Let's take a walk in the park. ...
-```
-
-### 6) 批量推理与自动评测
-
-第一步：对验证集 JSONL 进行批量翻译，生成 `CSV`（两列：`pred`、`gt`）。
+`src/inference.py` 是一个独立的推理脚本，不依赖 Hydra，使用 `argparse` 解析参数。
 
 ```bash
-python src/batch_inference.py --jsonl data/translation2019zh_valid.json --csv_out outputs/valid_pred.csv --config configs/model/translate.yaml --weight_path "logs/train/translate/default/<时间戳>/checkpoints/last.ckpt" --tokenizer_path checkpoints/mt5-small --max_src_len 128 --max_tgt_len 128 --batch_size 32
+python src/inference.py \
+    --config configs/model/translate.yaml \
+    --weight_path "path/to/your/weight.pt" \
+    --tokenizer_path checkpoints/mt5-small \
+    --text "今天天气不错，我们去公园散步吧。"
+```
+
+**输出示例**:
+```
+Input: 今天天气不错，我们去公园散步吧。
+Translation: The weather is nice today. Let's go for a walk in the park.
+```
+
+## 📊 评估流程
+
+评估模型性能分为两步：首先进行批量推理生成翻译结果，然后使用评测脚本计算标准指标。
+
+### 第一步：批量推理 → 生成 CSV
+
+此步骤使用 `src/batch_inference.py` 脚本，对验证集或测试集（JSONL 格式）进行批量翻译，并将结果（模型预测 `pred` 和真实标签 `gt`）保存到一个 CSV 文件中。
+
+- **输入**:
+  - `--jsonl`: 待翻译的 JSONL 文件路径 (默认为 `data/translation2019zh_valid.json`)。
+- **关键参数**:
+  - `--config`: 模型配置文件路径。
+  - `--weight_path`: 已训练好的模型权重路径。
+  - `--tokenizer_path`: 分词器路径。
+  - `--batch_size`: 推理时的批处理大小。
+- **输出**:
+  - `--csv_out`: 保存结果的 CSV 文件路径。
+
+**命令示例**:
+```bash
+python src/batch_inference.py \
+	--jsonl data/translation2019zh_valid.json \
+	--csv_out outputs/valid_pred.csv \
+	--config configs/model/translate.yaml \
+	--weight_path "path/to/your/weight.pt" \
+	--tokenizer_path checkpoints/mt5-small \
+	--batch_size 32
+```
+
+### 第二步：计算指标 (sacreBLEU / chrF / TER)
+
+获得包含预测和参考译文的 CSV 文件后，使用 `src/translate_eval.py` 脚本计算各项翻译指标。
+
+- **输入**:
+  - `--csv`: 上一步生成的 CSV 文件路径。
+- **输出**:
+  - 终端打印样本数、sacreBLEU、chrF 和 TER 分数。
+
+**命令示例**:
+```bash
 python src/translate_eval.py --csv outputs/valid_pred.csv
-第二步：使用 sacreBLEU/chrF/TER 评测：
-
-```powershell
-python src/translate_eval.py --csv outputs/valid_pred.csv
 ```
 
-示例输出：
-
+**输出示例**:
 ```
 ====== MT Evaluation (sacreBLEU) ======
 Samples: 3000
@@ -182,84 +386,37 @@ TER:  60.12
 BLEU signature: BLEU+case.lc+numrefs.1+smooth.exp+tok.13a+version.2.5.1
 ```
 
----
 
-## 配置说明（Hydra）
+### 定性案例（Qualitative Examples）
 
-- 训练入口 `src/train.py` 默认加载 `configs/train.yaml`，其中通过 `defaults` 组合：
-	- `data: translate` → `configs/data/translate.yaml`
-	- `model: translate` → `configs/model/translate.yaml`
-	- `callbacks: default`、`trainer: default` 等
-	- 你可以用 `experiment=...` 快捷切换一组组合过的超参（如 `configs/experiment/translate.yaml`）。
-- 推理脚本 `src/inference.py` 只需要模型子配置：`--config configs/model/translate.yaml`（会从 `net` 节点构建模型）。
-- 常用可覆盖项：
-	- 数据：`data.train_path`、`data.val_path`、`data.tokenizer_path`、`data.batch_size`、`data.max_src_len`、`data.max_tgt_len`
-	- 模型：`model.net.encoder_layers`、`model.net.decoder_layers`、`model.net.embed_dim`、`model.net.num_heads`、dropout 等
-	- 训练器：`trainer.max_epochs`、`trainer.accelerator=cpu|gpu`、`trainer.check_val_every_n_epoch` 等
+说明：第三列“建议译文”来自 Google 翻译，仅供参考对照。
+
+| 中文输入 | 模型输出 | 建议译文（Google 翻译） |
+| --- | --- | --- |
+| 根据《中国疼痛医学发展报告（2020）》的数据显示，我国目前有超过3亿人正在经受慢性疼痛的困扰，慢性疼痛已经成为仅次于心脑血管疾病和肿瘤的第三大健康问题。 | According to the China pain-based report on the latest report, more than 300 million people are suffering from chronic pain, which has become the third health problem after cardiovascular disease and tumor. | According to the "China Pain Medicine Development Report (2020)," over 300 million people in my country currently suffer from chronic pain, making it the third most common health concern after cardiovascular and cerebrovascular diseases and cancer. |
+| 祝你生日快乐！希望你喜欢这份礼物。 | Wish you a happy birthday! I hope you like this gift. | Happy birthday! I hope you enjoy this gift. |
+| 我们将于明天上午九点开会，请准时参加。 | Please attend the meeting at 9am tomorrow. | We will have a meeting at nine o'clock tomorrow morning. Please attend on time. |
+
 
 ---
 
-## 模型说明（Mini Translate + RoPE）
+## 📈 日志、检查点与可视化
 
-文件：`src/models/components/mini_translate.py`
+- **Hydra 输出**: 默认情况下，每次运行的输出都会保存在 `logs/` 目录下，并按时间戳生成唯一的文件夹。
+  - **训练日志**: `logs/train/runs/<时间戳>/`
+  - **检查点**: 训练过程中生成的模型检查点（checkpoints）位于每次运行输出目录的 `checkpoints/` 子文件夹下。默认会保存最后一个 epoch 的权重 (`last.ckpt`) 以及验证集损失 (`val_loss`) 最优的权重。
 
-- 编码器-解码器 Transformer 结构，支持多头注意力、前馈、LayerNorm（自实现）
-- 使用 RoPE（旋转位置编码）作用在 Q/K 上
-- 词嵌入与输出层权重共享（`self.head.weight = self.embedding.weight`）
-- 解码时采用 greedy 策略（示例脚本可替换为 beam search）
-
-优化器与调度（见 `src/models/translate_module.py`）：
-
-- `AdamW` + 余弦退火（warmup 比例可配 `model.warmup_ratio`，最小 lr 比例 `model.min_lr_rate`）
-- loss：`CrossEntropyLoss`（忽略 label 为 `-100` 的 pad 部分）
+- **TensorBoard 可视化**:
+  当使用 `logger=tensorboard` (这是默认配置) 时，训练过程中的各项指标（如 loss、accuracy）会被记录下来。你可以使用 TensorBoard 查看这些指标的变化曲线。
+  ```bash
+  tensorboard --logdir logs/train/runs
+  ```
 
 ---
 
-## 日志、检查点与可视化
+## 🙏 参考与致谢
 
-- Hydra 输出目录模式：`configs/hydra/default.yaml`
-	- 训练日志目录：`logs/train/<tags>/.../<时间戳>/`
-	- 回调中的检查点保存在：`<output_dir>/checkpoints/`，默认保存 last 与按 `val_loss` 最优
-- TensorBoard（当使用 `experiment=translate` 时默认启用 TB Logger）：
-
-```bash
-tensorboard --logdir logs
-```
-
----
-
-## 常见问题（FAQ）
-
-1) Torch 安装失败或 CUDA 不匹配？
-
-- 请到 PyTorch 官网选择与你 CUDA 版本匹配的命令安装，然后再 `pip install -r requirements.txt`。
-
-2) 评估脚本 `src/eval.py` 默认是 MNIST 配置？
-
-- 这是模板默认值，需要在命令行覆盖为翻译配置：`data=translate model=translate`。
-
-3) 推理时提示缺少 `pad/eos`？
-
-- 请确认你的分词器目录正确、且包含有效的 `pad_token_id` 和 `eos_token_id`。可用 mT5 分词器（如 `google/mt5-small`）。
-
-4) 自定义数据格式？
-
-- 请确保是 JSONL，每行包含键 `chinese` 与 `english`，并去除空行/空字段。
-
-5) 想在 CPU 上调试？
-
-- 训练：`trainer.accelerator=cpu`；推理脚本会自动检测设备（优先 CUDA）。
-
-6) 想提升速度？
-
-- 可尝试将 `model.compile=true`（默认已打开，需 PyTorch 2.0+），并适当减少 `max_src_len/max_tgt_len`、减小层数/隐藏维度、使用更小 batch。
-
----
-
-## 参考与致谢
-
-- PyTorch Lightning, Hydra, Hugging Face Transformers
-- sacreBLEU, chrF, TER 指标实现
-
-如有问题或建议，欢迎提交 Issue 或 PR！
+- 本项目的脚手架基于 [**lightning-hydra-template**](https://github.com/ashleve/lightning-hydra-template)，感谢 [ashleve](https://github.com/ashleve) 提供的优秀模板，极大地简化了项目初始化和配置管理的复杂度。
+- 数据集来源于 [**brightmart/nlp_chinese_corpus**](https://github.com/brightmart/nlp_chinese_corpus)。
+- 模型实现和训练流程参考了 PyTorch Lightning 和 Hugging Face Transformers 的官方文档。
 
