@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=9 python src/batch_inference.py --csv_out result/translate-post-norm.csv --config configs/model/translate-post-norm.yaml --weight_path logs/train/translate/post-norm/2025-10-19_21-56-26/checkpoints/last.ckpt 

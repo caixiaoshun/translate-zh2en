@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=8 python src/batch_inference.py --csv_out result/translate-absolute-position-embedding.csv --config configs/model/translate-absolute-position-embedding.yaml --weight_path logs/train/translate/absolute-position-embedding/2025-10-19_21-55-49/checkpoints/last.ckpt 

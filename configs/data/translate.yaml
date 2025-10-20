@@ -1,0 +1,10 @@
+_target_: src.data.translate_datamodule.TranslateDataModule
+train_path: data/translation2019zh_train.json
+val_path: data/translation2019zh_valid.json
+tokenizer_path: checkpoints/mt5-small
+max_src_len: 128
+max_tgt_len: 128
+batch_size: 32
+num_workers: 4
+pin_memory: True
+pad_id: 0

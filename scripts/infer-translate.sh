@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=8 python src/batch_inference.py --csv_out result/translate.csv --config configs/model/translate.yaml --weight_path logs/train/translate/default/2025-10-19_09-59-13/checkpoints/last.ckpt 
