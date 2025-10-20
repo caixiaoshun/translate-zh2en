@@ -25,7 +25,7 @@
 	·
 	<a href="#-评估流程">评估流程</a>
 	·
-  <a href="#-开源资产与目录">开源资产与目录</a>
+  <a href="#-hugging-face-hub">Hugging Face Hub</a>
 </p>
 
 ## 📖 总览
@@ -45,7 +45,7 @@
 - [**总览**](#-总览)
 - [**目录**](#-目录)
 - [**功能概述**](#-功能概述)
-- [**开源资产与目录**](#-开源资产与目录)
+- [**Hugging Face Hub**](#-hugging-face-hub)
 - [**流程总览**](#-流程总览)
 - [**模型说明**](#-模型说明)
 - [**目录结构**](#-目录结构)
@@ -73,21 +73,19 @@
 
 ---
 
-## � 开源资产与目录
+## 🤗 Hugging Face Hub
 
-本项目在 Hugging Face 上开源了以下资产（统一入口）：
+本项目在 Hugging Face 上开源了以下资源：
 
-- 模型与文件仓库：
-  - 链接：https://huggingface.co/caixiaoshun/translate-zh2en
-  - 内容：模型权重、数据样例、批量推理结果 CSV 等
-- 在线体验（Space）：
-  - 链接：https://huggingface.co/spaces/caixiaoshun/translate-zh2en
+| 模型与文件仓库 (Model & Files) | 在线体验 (Space) |
+| :---: | :---: |
+| [![Hugging Face Model Card](https://img.shields.io/badge/🤗%20Model-caixiaoshun/translate--zh2en-blue)](https://huggingface.co/caixiaoshun/translate-zh2en) | [![Hugging Face Space Card](https://img.shields.io/badge/🚀%20Space-caixiaoshun/translate--zh2en-yellow)](https://huggingface.co/spaces/caixiaoshun/translate-zh2en) |
 
-常用子目录说明（Hugging Face 仓库 Files 视图）：
+### 仓库文件结构
 
 ```text
 translate-zh2en (HF)
-├─ weights/                # 预训练权重（.pt）
+├─ weights/                # 预训练权重 (.pt）
 │  ├─ default.pt
 │  ├─ absolute-position-embedding.pt
 │  ├─ no-position-embedding.pt
@@ -97,10 +95,10 @@ translate-zh2en (HF)
 │  ├─ translate-absolute-position-embedding.csv
 │  ├─ translate-no-position-embedding.csv
 │  └─ translate-post-norm.csv
-├─ data/                   # 数据样例（JSON）
+├─ data/                   # 完整数据
 │  ├─ translation2019zh_train.json
 │  └─ translation2019zh_valid.json
-└─ README.md               # HF 模型卡（可选）
+└─ README.md
 ```
 
 说明：不同时间点文件可能更新，建议以 Hugging Face 页面“Files”列表为准。
@@ -416,7 +414,13 @@ BLEU signature: BLEU+case.lc+numrefs.1+smooth.exp+tok.13a+version.2.5.1
 
 ## 🙏 参考与致谢
 
-- 本项目的脚手架基于 [**lightning-hydra-template**](https://github.com/ashleve/lightning-hydra-template)，感谢 [ashleve](https://github.com/ashleve) 提供的优秀模板，极大地简化了项目初始化和配置管理的复杂度。
-- 数据集来源于 [**brightmart/nlp_chinese_corpus**](https://github.com/brightmart/nlp_chinese_corpus)。
-- 模型实现和训练流程参考了 PyTorch Lightning 和 Hugging Face Transformers 的官方文档。
+- 感谢 [ashleve](https://github.com/ashleve) 提供的优秀模板，极大地简化了项目初始化和配置管理的复杂度。
+
+[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=ashleve&repo=lightning-hydra-template)](https://github.com/ashleve/lightning-hydra-template)
+
+
+- 感谢[brightmart](https://github.com/brightmart/nlp_chinese_corpus)的开源数据
+
+[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=brightmart&repo=nlp_chinese_corpus)](https://github.com/brightmart/nlp_chinese_corpus)
+
 
