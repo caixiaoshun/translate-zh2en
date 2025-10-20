@@ -387,9 +387,7 @@ BLEU signature: BLEU+case.lc+numrefs.1+smooth.exp+tok.13a+version.2.5.1
 
 ### 定性案例（Qualitative Examples）
 
-说明：第三列“建议译文”来自 Google 翻译，仅供参考对照。
-
-| 中文输入 | 模型输出 | 建议译文（Google 翻译） |
+| 中文输入 | 模型输出 | Google 翻译 |
 | --- | --- | --- |
 | 根据《中国疼痛医学发展报告（2020）》的数据显示，我国目前有超过3亿人正在经受慢性疼痛的困扰，慢性疼痛已经成为仅次于心脑血管疾病和肿瘤的第三大健康问题。 | According to the China pain-based report on the latest report, more than 300 million people are suffering from chronic pain, which has become the third health problem after cardiovascular disease and tumor. | According to the "China Pain Medicine Development Report (2020)," over 300 million people in my country currently suffer from chronic pain, making it the third most common health concern after cardiovascular and cerebrovascular diseases and cancer. |
 | 祝你生日快乐！希望你喜欢这份礼物。 | Wish you a happy birthday! I hope you like this gift. | Happy birthday! I hope you enjoy this gift. |
