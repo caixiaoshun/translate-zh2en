@@ -101,7 +101,7 @@ translate-zh2en (HF)
 └─ README.md
 ```
 
-说明：不同时间点文件可能更新，建议以 Hugging Face 页面“Files”列表为准。
+> 不同时间点文件可能更新，建议以 Hugging Face 页面“Files”列表为准。
 
 ---
 
