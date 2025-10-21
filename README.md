@@ -291,8 +291,8 @@ Hydra 允许在命令行中轻松覆盖任何配置项。
 
 - **示例：修改训练参数**
   ```bash
-  # 训练 10 个 epoch，batch size 设为 64，学习率改为 3e-4
-  python src/train.py experiment=translate trainer.max_epochs=10 data.batch_size=64 model.lr=3e-4
+  # 训练 10 个 epoch，batch size 设为 64，使用8张卡卡训练
+  CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python src/train.py experiment=translate trainer.max_epochs=10 data.batch_size=64
   ```
 
 - **示例：在 CPU 上训练**
